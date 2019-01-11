@@ -1,0 +1,6 @@
+PyAudio
+PocketSphinx
+SpeechRecognition
+google-api-python-client
+gcloud
+behave
