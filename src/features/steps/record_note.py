@@ -4,6 +4,7 @@ import asyncio
 from os import path
 get_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "/materials/" + f.lower() + ".wav")
 test_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "speech_test.wav")
+test_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "record.wav")
 ttime = False
 
 
@@ -18,8 +19,8 @@ def record_competed(context):
 
 @when("user pronounce {text}")
 def when_user_pronounced_tag(context, text): #tag_name
-    #audio_file = get_file(text)
-    audio_file = test_file(text)
+    #audio_file = get_file(text) #Use this for non-test purposes
+    audio_file = test_record(text)
     context.audio_file = audio_file
     pass
 
@@ -29,24 +30,24 @@ def recognize_command(context):
     with sr.AudioFile(context.audio_file) as source:
         audio = context.recognizer.record(source)
     context.recognized_command = context.recognizer.recognize_sphinx(audio)
+    print('recognized? : ' + context.recognized_command)
     #if record state -> coroutine
-    loop = asyncio.get_event_loop()
-    future = asyncio.Future()
-    task = asyncio.ensure_future(state_control(""))
-    loop.run_until_complete(task)
-    #task = loop.create_task(state_control())
-   # loop.run_until_complete(task)
+    if context.recognized_command == "record":
+        print('recognized')
+        startcoroutine()
+    elif context.recognized_command == "precise record": #recognizer sucks sometimes ¯\_(ツ)_/¯
+        print('recognized')
+        startcoroutine()
+        pass
 
 
 
 #@when("time interval since last record < 3 sec")
 async def state_control(context):
     ttime = True
-    #context.time_interval_satisfied = True
     await asyncio.sleep(3)
     ttime = False
     return ttime
-    #context.time_interval_satisfied = False
 
 
 # @when("user pronounce {tag_name}")
@@ -76,3 +77,10 @@ def succeed_code_in_status_bar(context):
 ########## ADDITIONAL STUFF #############
 
 
+def startcoroutine():
+    loop = asyncio.get_event_loop()
+    future = asyncio.Future()
+    task = asyncio.ensure_future(state_control(""))
+    loop.run_until_complete(task)
+    print('Coroutine done')
+    return 'Completed'

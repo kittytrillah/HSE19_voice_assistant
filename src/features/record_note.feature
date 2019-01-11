@@ -6,6 +6,6 @@ Feature: Record a note
     Given service is active
     When user pronounce "test record"
     And program recognize input
-    #And time interval since last record < 3 sec
+    #And time interval since last record < 3 sec # This is coroutine, so start this from step below
     Then record state is activated
     And user pronounces what has to be recorded
