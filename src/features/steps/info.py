@@ -1,5 +1,6 @@
 from behave import given, when, then
 import speech_recognition as sr
+import wikipedia
 import asyncio
 import re
 import sqlite3
@@ -47,7 +48,8 @@ def recognize_command(context):
     print('recognized? : ' + context.recognized_command)
     if context.recognized_command == "source":
         print('recognized show')
-    elif context.recognized_command == "find author":
+    if "find author" in context.recognized_command:
+        context.auname = context.recognized_command.replace("find author", "")
         print('recognized save')
 
 @then("program reads meta")
@@ -62,6 +64,8 @@ def show_meta_result(context):
 
 @then("looks for author info using Wikipedia API")
 def wiki_look(context):
+    author = wikipedia.page(context.auname)
+    author.sections
     print("looks for author info using Wikipedia API") #mock
 
 
