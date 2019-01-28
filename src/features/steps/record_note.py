@@ -4,10 +4,15 @@ import asyncio
 import re
 import sqlite3
 from os import path
+
+########TEST RECORDED SPEECH###########
 get_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "/materials/" + f.lower() + ".wav")
 test_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "speech_test.wav")
 test_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "record.wav")
+flex_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "weird_flex_but_okay.wav")
 tag_books = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "books.wav")
+########################################
+
 ttime = False
 
 
@@ -23,10 +28,29 @@ def record_competed(context):
     # plus add some visualization to show user a change of state
 
 
+@given("{text} exists")
+def tag_exists(context, text):
+    print("tag: " + text)
+    pass
+
+
+@given("page is empty")
+def page_empty(context):
+    print("Page is empty")
+    pass
+
 @when("user pronounce {text}")
 def when_user_pronounced_tag(context, text): #tag_name
     #audio_file = get_file(text) #Use this for non-test purposes
     audio_file = test_record(text)
+    context.audio_file = audio_file
+    pass
+
+
+@when("user falsely pronounce {text}")
+def when_user_mispronounced_tag(context, text): #tag_name
+    #audio_file = get_file(text) #Use this for non-test purposes
+    audio_file = flex_record(text)
     context.audio_file = audio_file
     pass
 
@@ -44,6 +68,8 @@ def recognize_command(context):
     elif context.recognized_command == "precise record": #recognizer sucks sometimes ¯\_(ツ)_/¯
         print('recognized')
         startcoroutine()
+        pass
+    else:
         pass
 
 
@@ -82,6 +108,11 @@ def find_text(context):
     return 'Text found'
 
 
+@when("user silent for 3+ seconds")
+def silent_user(context):
+    print("User is silent")
+
+
 async def state_control():
     ttime = True
     await asyncio.sleep(3)
@@ -94,15 +125,20 @@ async def checktextexistence(): #Mock for the future speech-to-text update
     return ttime
 
 
-# @when("user pronounce {tag_name}")
-# def when_user_pronounced_tag(context, tag_name): #tag_name
-#     #tag_name.user_pronounced_tag = sr.Recognizer()
-#     pass
+@when("program can't find existing command")
+def error_cant_find(context): #tag_name
+    print('No such method')
+    pass
 
 
-# @when("time interval since last record < 3 sec")
-# def when_time_interval_satisfied(context):
-#     context.time_interval_satisfied = True
+@when("text unrecognized")
+def text_unrecognized(context): #tag_name
+    print("text unrecognized")
+
+
+@when("user fails to pronounce a tag")
+def tag_slow(context): #tag_name
+    print("this happens")
 
 
 @then("note is recorded")
@@ -144,6 +180,25 @@ def tag_save(context): #tag_name
         print(err)
         pass
     context.reply = "Tag recorded"
+
+
+@then("app is asking user to repeat {text}")
+def repeat(context, text): #tag_name
+    audio_file = test_record(text) # let's assume user finally pronounced anything right
+    context.audio_file = audio_file
+
+
+@then("app notices user about {text}")
+def tag_save(context, text): #tag_name
+    print("NOTIFICATION: " + text)
+
+
+@then("app resets command")
+def app_reset(context): #tag_name
+    print("reset")
+
+
+
 
 ########## ADDITIONAL STUFF #############
 

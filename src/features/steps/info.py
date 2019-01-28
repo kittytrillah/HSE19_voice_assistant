@@ -5,14 +5,18 @@ import asyncio
 import re
 import sqlite3
 from os import path
+
+
+########TEST RECORDED SPEECH###########
 get_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "/materials/" + f.lower() + ".wav")
 test_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "speech_test.wav")
 test_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "record.wav")
 tag_books = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "books.wav")
 quotes = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "show_me_the_quotes.wav")
 source = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "source.wav")
-ttime = False
+########################################
 
+ttime = False
 
 
 currentst = '' #this is a global string constantly updating variable containing recorded speech
