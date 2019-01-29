@@ -4,6 +4,10 @@ Feature: Record a note
 
   Scenario: Record with a new tag
     Given service is active
+    | tag            | quote         | date        | sync |
+    | my quotes      | lasagna       | 23.03.2009  | YES  |
+    | other          | miumiu        | 28.03.2018  | NO   |
+    | other          | John has bobs | 21.04.2019  | YES  |
     When user pronounce "test record"
     #And time interval since last record < 3 sec # This is coroutine, so we have to use async here
     And program recognize input
