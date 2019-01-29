@@ -5,21 +5,21 @@ import re
 import sqlite3
 from os import path
 
-########TEST RECORDED SPEECH###########
+# #######TEST RECORDED SPEECH########## #
 get_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "/materials/" + f.lower() + ".wav")
 test_file = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "speech_test.wav")
 test_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "record.wav")
 flex_record = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "weird_flex_but_okay.wav")
 tag_books = lambda f: path.join(path.dirname(path.realpath(__file__)), "materials/" + "books.wav")
-########################################
+# ###################################### #
 
 ttime = False
 
 
-currentst = '' #this is a global string constantly updating variable containing recorded speech
+currentst = '' # this is a global string constantly updating variable containing recorded speech
 dirpath = path.dirname(path.realpath(__file__))
 
-########## BEHAVE PART ###########
+# ######### BEHAVE PART ########## #
 
 
 @given("service is active")
@@ -41,7 +41,7 @@ def page_empty(context):
 
 @when("user pronounce {text}")
 def when_user_pronounced_tag(context, text): #tag_name
-    #audio_file = get_file(text) #Use this for non-test purposes
+    # audio_file = get_file(text) #Use this for non-test purposes
     audio_file = test_record(text)
     context.audio_file = audio_file
     pass
@@ -49,7 +49,7 @@ def when_user_pronounced_tag(context, text): #tag_name
 
 @when("user falsely pronounce {text}")
 def when_user_mispronounced_tag(context, text): #tag_name
-    #audio_file = get_file(text) #Use this for non-test purposes
+    # audio_file = get_file(text) #Use this for non-test purposes
     audio_file = flex_record(text)
     context.audio_file = audio_file
     pass
@@ -61,11 +61,11 @@ def recognize_command(context):
         audio = context.recognizer.record(source)
     context.recognized_command = context.recognizer.recognize_sphinx(audio)
     print('recognized? : ' + context.recognized_command)
-    #if record state -> coroutine
+    # if record state -> coroutine
     if context.recognized_command == "record":
         print('recognized')
         startcoroutine()
-    elif context.recognized_command == "precise record": #recognizer sucks sometimes ¯\_(ツ)_/¯
+    elif context.recognized_command == "precise record":  # recognizer sucks sometimes ¯\_(ツ)_/¯
         print('recognized')
         startcoroutine()
         pass
@@ -73,22 +73,22 @@ def recognize_command(context):
         pass
 
 
-@when("program recorded text {text}") #in future speech to text should be done in coroutine
+@when("program recorded text {text}")  # in future speech to text should be done in coroutine
 def record_text(context, text):
     audio_file = test_file(text)
     context.audio_file = audio_file
     with sr.AudioFile(context.audio_file) as source:
         audio = context.recognizer.record(source)
     context.recognized_text = context.recognizer.recognize_google(audio)
-    currentst = context.recognized_text # sort of mock for the future updates
+    currentst = context.recognized_text  # sort of mock for the future updates
     print('recorded current: ' + currentst)
     print('recognized : ' + context.recognized_text)
     return 'Text recorded'
 
 
 @when("program starts recording {text}")
-def user_reads_text(context, text): #tag_name
-    #audio_file = get_file(text) #Use this for non-test purposes
+def user_reads_text(context, text):  # tag_name
+    # audio_file = get_file(text) #Use this for non-test purposes
     audio_file = test_file(text)
     context.audio_file = audio_file
     pass
@@ -120,13 +120,13 @@ async def state_control():
     return ttime
 
 
-async def checktextexistence(): #Mock for the future speech-to-text update
+async def checktextexistence():  # Mock for the future speech-to-text update
     await asyncio.sleep(0.1)
     return ttime
 
 
 @when("program can't find existing command")
-def error_cant_find(context): #tag_name
+def error_cant_find(context):  # tag_name
     print('No such method')
     pass
 
@@ -137,7 +137,7 @@ def text_unrecognized(context): #tag_name
 
 
 @when("user fails to pronounce a tag")
-def tag_slow(context): #tag_name
+def tag_slow(context):  # tag_name
     print("this happens")
 
 
@@ -149,8 +149,8 @@ def tag_record(context):
         "Create TABLE if not exists notes (tag TEXT,content TEXT)")
     try:
         pass
-        #c.execute() Execute our values not to lose note data
-        #conn.commit()
+        # c.execute() Execute our values not to lose note data
+        # conn.commit()
     except Exception as err:
         print(err)
         pass
@@ -160,14 +160,14 @@ def tag_record(context):
 
 
 @then("user pronounces {text}")
-def when_user_pronounced_tag(context, text): #tag_name
+def when_user_pronounced_tag(context, text):  # tag_name
     audio_file = tag_books(text)
     if ttime:
-        context.audio_file = audio_file # Somewhat timer for operation recognition
+        context.audio_file = audio_file  # Somewhat timer for operation recognition
 
 
 @then("tag saved with a note")
-def tag_save(context): #tag_name
+def tag_save(context):  # tag_name
     conn = sqlite3.connect(dirpath + "/notes_db.db")
     c = conn.cursor()
     c.execute(
@@ -183,24 +183,22 @@ def tag_save(context): #tag_name
 
 
 @then("app is asking user to repeat {text}")
-def repeat(context, text): #tag_name
-    audio_file = test_record(text) # let's assume user finally pronounced anything right
+def repeat(context, text):  # tag_name
+    audio_file = test_record(text)  # let's assume user finally pronounced anything right
     context.audio_file = audio_file
 
 
 @then("app notices user about {text}")
-def tag_save(context, text): #tag_name
+def tag_save(context, text):  # tag_name
     print("NOTIFICATION: " + text)
 
 
 @then("app resets command")
-def app_reset(context): #tag_name
+def app_reset(context):  # tag_name
     print("reset")
 
 
-
-
-########## ADDITIONAL STUFF #############
+# ######### ADDITIONAL STUFF ############ #
 
 
 def startcoroutine():
@@ -211,10 +209,3 @@ def startcoroutine():
     print('Coroutine done')
     return 'Completed'
 
-
-def refreshsearchcoroutine():
-    loop = asyncio.get_event_loop()
-    future = asyncio.Future()
-    task = asyncio.ensure_future(state_control())
-    loop.run_until_complete(task)
-    return 'Search part done'
